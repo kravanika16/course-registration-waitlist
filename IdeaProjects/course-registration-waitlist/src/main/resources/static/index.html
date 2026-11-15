@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Registration | Schwab Learning</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-icon">CR</div>
+        <div>
+            <h1>Course Registration</h1>
+            <p>Enrollment Management Portal</p>
+        </div>
+    </div>
+    <span class="system-status">
+        <span class="status-dot"></span> System Online
+    </span>
+</header>
+
+<main class="container">
+
+    <section class="welcome">
+        <div>
+            <p class="eyebrow">COURSE MANAGEMENT</p>
+            <h2>Course Enrollment Dashboard</h2>
+            <p>Manage learner registrations and waitlist promotions.</p>
+        </div>
+        <button class="refresh-button" onclick="loadRegistrations()">
+            ↻ Refresh
+        </button>
+    </section>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <p>Total Capacity</p>
+            <h2 id="capacity">0</h2>
+            <span>Maximum seats</span>
+        </div>
+
+        <div class="stat-card">
+            <p>Enrolled Learners</p>
+            <h2 id="enrolledCount">0</h2>
+            <span>Currently enrolled</span>
+        </div>
+
+        <div class="stat-card">
+            <p>Available Seats</p>
+            <h2 id="availableSeats">0</h2>
+            <span>Seats remaining</span>
+        </div>
+
+        <div class="stat-card">
+            <p>Waitlisted Learners</p>
+            <h2 id="waitlistCount">0</h2>
+            <span>Waiting for a seat</span>
+        </div>
+    </section>
+
+    <section class="content-grid">
+
+        <div class="panel registration-panel">
+            <div class="panel-heading">
+                <h3>Register Learner</h3>
+                <p>Enter learner details to request enrollment.</p>
+            </div>
+
+            <form id="registrationForm">
+                <label for="learnerId">Learner ID</label>
+                <input
+                        type="text"
+                        id="learnerId"
+                        placeholder="Example: L105"
+                        required
+                >
+
+                <label for="prerequisite">Prerequisite Status</label>
+                <select id="prerequisite" required>
+                    <option value="true">Satisfied</option>
+                    <option value="false">Not Satisfied</option>
+                </select>
+
+                <button type="submit" class="primary-button">
+                    Register Learner
+                </button>
+            </form>
+
+            <div id="message" class="message hidden"></div>
+        </div>
+
+        <div class="panel course-panel">
+            <div class="panel-heading">
+                <h3>Course Information</h3>
+                <p>Current registration overview.</p>
+            </div>
+
+            <div class="course-info">
+                <div>
+                    <span>Course</span>
+                    <strong>Advanced Java Programming</strong>
+                </div>
+                <div>
+                    <span>Registration Policy</span>
+                    <strong>First In, First Out (FIFO)</strong>
+                </div>
+                <div>
+                    <span>Prerequisite</span>
+                    <strong>Java Fundamentals completed</strong>
+                </div>
+                <div>
+                    <span>Storage</span>
+                    <strong>In-memory</strong>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="tables-grid">
+
+        <div class="panel">
+            <div class="panel-heading">
+                <h3>Enrolled Learners</h3>
+                <p>Learners who currently have a seat.</p>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Learner ID</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="enrolledTable">
+                    <tr>
+                        <td colspan="3">Loading learners...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-heading">
+                <h3>Waitlist</h3>
+                <p>Learners waiting for an available seat, in FIFO order.</p>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Learner ID</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="waitlistTable">
+                    <tr>
+                        <td colspan="3">Loading waitlist...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    Course Registration Management System
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
