@@ -9,7 +9,7 @@ public class CourseRegistrationDemo {
     public static void main(String[] args) {
 
         CourseRegistrationService registrationService =
-                new CourseRegistrationService(30);
+                new CourseRegistrationService(2);
 
         System.out.println("=== Course Registration Demo ===");
 
