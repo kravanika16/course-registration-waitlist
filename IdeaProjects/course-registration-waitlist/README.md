@@ -13,6 +13,19 @@ The application allows learners to:
 
 The waitlist follows the First In, First Out (FIFO) policy.
 
+### Data Persistence
+
+The application currently uses in-memory storage
+with LinkedHashMap to maintain enrolled and
+waitlisted learners.
+
+Registration data is maintained while the
+application is running. Data is cleared when
+the application stops or restarts.
+
+Persistent database storage is considered
+outside the scope of this prototype.
+
 ## 2. Technology Stack
 
 - Java 21

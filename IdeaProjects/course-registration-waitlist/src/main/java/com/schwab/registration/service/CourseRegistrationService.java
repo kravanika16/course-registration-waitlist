@@ -3,6 +3,8 @@ package com.schwab.registration.service;
 import com.schwab.registration.model.Learner;
 import com.schwab.registration.model.RegistrationResult;
 import com.schwab.registration.model.RegistrationStatus;
+import com.schwab.registration.exception.InvalidLearnerException;
+import com.schwab.registration.exception.InvalidCourseCapacityException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,77 +20,52 @@ public class CourseRegistrationService {
     private final Map<String, Learner> enrolledLearners = new LinkedHashMap<>();
     private final Map<String, Learner> waitlistedLearners = new LinkedHashMap<>();
 
-    public CourseRegistrationService(
-            @Value("${course.capacity:2}") int capacity) {
+    public CourseRegistrationService(@Value("${course.capacity:2}") int capacity) {
 
         if (capacity <= 0) {
-            throw new IllegalArgumentException(
-                    "Course capacity must be greater than zero");
+            throw new InvalidCourseCapacityException("Course capacity must be greater than zero");
         }
-
         this.capacity = capacity;
     }
 
     public synchronized RegistrationResult register(Learner learner) {
         if (learner == null) {
-            throw new IllegalArgumentException("Learner cannot be null");
+            throw new InvalidLearnerException("Learner cannot be null");
         }
 
         String learnerId = learner.learnerId();
         if (enrolledLearners.containsKey(learnerId) || waitlistedLearners.containsKey(learnerId)) {
-            return result(
-                    learnerId,
-                    RegistrationStatus.ALREADY_REGISTERED,
-                    "Learner is already registered.",
-                    null);
+            return result(learnerId, RegistrationStatus.ALREADY_REGISTERED, "Learner is already registered.", null);
         }
 
         if (!learner.prerequisiteSatisfied()) {
-            return result(
-                    learnerId,
-                    RegistrationStatus.INELIGIBLE,
-                    "Learner has not satisfied the prerequisite.",
-                    null
+            return result(learnerId, RegistrationStatus.INELIGIBLE, "Learner has not satisfied the prerequisite.", null
             );
         }
 
         if (enrolledLearners.size() < capacity) {
             enrolledLearners.put(learnerId, learner);
 
-            return result(
-                    learnerId,
-                    RegistrationStatus.ENROLLED,
-                    "Learner enrolled successfully.",
-                    null
+            return result(learnerId, RegistrationStatus.ENROLLED, "Learner enrolled successfully.", null
             );
         }
         waitlistedLearners.put(learnerId, learner);
-        return result(
-                learnerId,
-                RegistrationStatus.WAITLISTED,
-                "Course is full. Learner added to the waitlist.",
-                null
+        return result(learnerId, RegistrationStatus.WAITLISTED, "Course is full. Learner added to the waitlist.", null
         );
     }
 
     public synchronized RegistrationResult drop(String learnerId) {
         if (learnerId == null || learnerId.isBlank()) {
-            throw new IllegalArgumentException("Learner ID cannot be blank");
+            throw new InvalidLearnerException("Learner ID cannot be blank");
         }
 
         if (enrolledLearners.remove(learnerId) == null) {
-            return result(
-                    learnerId,
-                    RegistrationStatus.NOT_ENROLLED,
-                    "Learner is not currently enrolled.",
-                    null
+            return result(learnerId, RegistrationStatus.NOT_ENROLLED, "Learner is not currently enrolled.", null
             );
         }
 
         String promotedLearnerId = promoteNextEligibleLearner();
-        return result(
-                learnerId,
-                RegistrationStatus.DROPPED,
+        return result(learnerId, RegistrationStatus.DROPPED,
                 promotedLearnerId == null
                         ? "Learner dropped successfully. No eligible learner to promote."
                         : "Learner dropped successfully. Next eligible learner promoted.",
@@ -118,12 +95,7 @@ public class CourseRegistrationService {
     }
 
     private RegistrationResult result(String learnerId, RegistrationStatus status, String message, String promotedLearnerId) {
-        return new RegistrationResult(
-                learnerId,
-                status,
-                message,
-                promotedLearnerId
-        );
+        return new RegistrationResult(learnerId, status, message, promotedLearnerId);
     }
 
     public synchronized void updatePrerequisiteStatus(String learnerId, boolean prerequisiteSatisfied) {
